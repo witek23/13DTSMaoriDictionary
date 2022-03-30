@@ -1,0 +1,36 @@
+{%  extends 'base.html' %}
+
+{% block pageheading %}
+cart
+{%  endblock %}
+
+{% block main %}
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <th>Quantity</th>
+                <th>Prices</th>
+                <th>Item Total</th>
+                <th>Remove one</th>
+            </tr>
+        </thead>
+        <tbody>
+        {%  for item in cart_data %}
+            <tr>
+                <td>{{ item[2] }}</td>
+                <td>{{ item[1] }}</td>
+                <td>${{ "{:.2f}".format(item[3]) }}</td>
+                <td>${{ "{:.2f}".format(item[4]) }}</td>
+                <td><a href="removefromcart/{{ item[0] }}">x</a></td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td></td>
+                <td></td>
+                <th>Total</th>
+                <td>${{ "{:.2f}".format(total)}}</td>
+            </tr>
+        </tbody>
+    </table>
+{%  endblock %}
