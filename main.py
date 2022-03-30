@@ -1,16 +1,18 @@
-# This is a sample Python script.
+from flask import Flask, render_template, request, redirect, session
+import sqlite3
+from sqlite3 import Error
+import re
+from flask_bcrypt import Bcrypt
+from datetime import datetime
+import smtplib, ssl
+from smtplib import SMTPAuthenticationError
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = Flask(__name__)
+bcrypt = Bcrypt(app)
+DATABASE = "dictionary.db"
+app.secret_key = "1234566778guygft698t7843y7349gtewg45"
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
