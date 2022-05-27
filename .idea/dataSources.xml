@@ -5,7 +5,7 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\18131\OneDrive - Wellington College\13DTS\13DTSMaoriDictionary\dictionary.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\OEM\OneDrive - Wellington College\13DTS\13DTSMaoriDictionary\dictionary.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>

@@ -29,19 +29,19 @@ def render_homepage():
     return render_template('home.html', logged_in=is_logged_in())
 
 
-@app.route('/menu')
+@app.route('/dictionary')
 def render_menu_page():
     # connect to the database
     con = create_connection(DATABASE)
 
     # select the things you want from your table(s)
-    query = "SELECT name, description, volume, image, price, id FROM product"
+    query = "SELECT maori, description, level, image, user_id, id FROM product"
 
     cur = con.cursor()  # You need this lin next
     cur.execute(query)  # this line executes the query
-    product_list = cur.fetchall()  # puts the results into a lst usable in python
+    translation_list = cur.fetchall()  # puts the results into a lst usable in python
     con.close()
-    return render_template('menu.html', products=product_list, logged_in=is_logged_in())
+    return render_template('menu.html', items=translation_list, logged_in=is_logged_in())
 
 
 @app.route('/contact')
@@ -58,7 +58,7 @@ def render_login_page():
         email = request.form.get('email').title().lower()
         password = request.form.get('password')
 
-        query = """SELECT id, fname, password FROM customer WHERE email=?"""
+        query = """SELECT id, fname, password FROM user WHERE email=?"""
         con = create_connection(DATABASE)
         cur = con.cursor()
         cur.execute(query, (email,))
@@ -82,7 +82,7 @@ def render_login_page():
             return redirect(request.referrer + "?error+Email+invalid+or+password+incorrect")
 
         session['email'] = email
-        session['customerid'] = customer_id
+        session['userid'] = customer_id
         session['first_name'] = first_name
         print(session)
         return redirect('/')
@@ -125,7 +125,7 @@ def render_signup_page():
 
         con = create_connection(DATABASE)
 
-        query = "INSERT INTO customer (fname, lname, email, password) VALUES (?, ?, ?, ?)"
+        query = "INSERT INTO user (id, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)"
         cur = con.cursor()  # you need this line next
 
         try:
