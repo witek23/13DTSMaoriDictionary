@@ -146,7 +146,7 @@ def render_signup_page():
         password = request.form.get('password')
         password2 = request.form.get('password2')
         can_modify = request.form.get("modify")
-        re1 = re.compile(r"[<>/{}[\]~`.?;:-=_+)(*&^%$#@!,]");
+        re1 = re.compile(r"[<>/{}[\]~`.?;:-=_+)(*&^%$#@!,;]")
 
         modify = False
         if can_modify:

@@ -43,7 +43,7 @@ a {
 }
 
 img {
-    width: 100%;
+    width: 80%;
 }
 .dataForm {
     margin: 1rem 0;
@@ -295,7 +295,7 @@ footer img {
 
 @media only screen and (min-width: 1000px) {
     #container {
-        width: 1000px;
+        width: 1600px;
         margin: auto;
     }
 }
