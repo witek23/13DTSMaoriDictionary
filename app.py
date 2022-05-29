@@ -1,13 +1,10 @@
+# import external libraries
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from sqlite3 import Error
 import re
 from flask_bcrypt import Bcrypt
 from datetime import datetime
-import smtplib, ssl
-from smtplib import SMTPAuthenticationError
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -15,6 +12,7 @@ DATABASE = "dictionary.db"
 app.secret_key = "1234566778guygft698t7843y7349gtewg45"
 
 
+# this function creates the initial connection with the database
 def create_connection(db_file):
     try:
         connection = sqlite3.connect(db_file)
@@ -26,27 +24,58 @@ def create_connection(db_file):
 
 @app.route('/')
 def render_homepage():
-    return render_template('home.html', logged_in=is_logged_in())
+    return render_template('home.html', all_categories=get_categories(),
+                           user_data=user_id_conversion(session.get("user_id")), logged_in=is_logged_in(),
+                           modify=edit())
 
 
-@app.route('/dictionary')
-def render_menu_page():
+@app.route('/dictionary/<word_id>')
+def render_dictionary_page(word_id):
     # connect to the database
     con = create_connection(DATABASE)
 
     # select the things you want from your table(s)
-    query = "SELECT maori, description, level, image, user_id, id FROM product"
+    query = "SELECT * FROM product WHERE id=?"
 
     cur = con.cursor()  # You need this lin next
-    cur.execute(query)  # this line executes the query
-    translation_list = cur.fetchall()  # puts the results into a lst usable in python
+    cur.execute(query, (word_id,))  # this line executes the query
+    translation_list = cur.fetchall()  # puts the results into a list usable in python
+
+    query = "SELECT * FROM user WHERE id=?"
+    cur = con.cursor()  # You need this lin next
+    cur.execute(query, (translation_list[0][7],))  # this line executes the query
+    f_user = cur.fetchall()
+
     con.close()
-    return render_template('menu.html', items=translation_list, logged_in=is_logged_in())
+
+    return render_template('dictionary.html', logged_in=is_logged_in(),
+                           user_data=user_id_conversion(session.get("user_id")), all_categories=get_categories(),
+                           modify=edit(), word_user_data=f_user, words_found=translation_list)
 
 
-@app.route('/contact')
-def render_contact():
-    return render_template('contact.html', logged_in=is_logged_in())
+@app.route('/category/<cat_id>')
+def render_category_page(cat_id):
+    # connect to the database
+    con = create_connection(DATABASE)
+
+    # select the things you want from your table(s)
+    query = "SELECT * FROM categories WHERE id=?"
+    cur = con.cursor()
+    cur.execute(query, (cat_id,))
+    cur_category = cur.fetchall()
+
+    # select the things you want from your table(s)
+    query = "SELECT * FROM product WHERE category_id=?"
+    cur = con.cursor()  # You need this lin next
+    cur.execute(query, (cat_id,))  # this line executes the query
+
+    translation_list = cur.fetchall()  # puts the results into a list usable in python
+    con.close()
+
+    return render_template("category.html", logged_in=is_logged_in(),
+                           user_data=user_id_conversion(session.get("user_id")), all_categories=get_categories(),
+                           modify=edit(),
+                           words_found=translation_list, cat_data=cur_category)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -57,9 +86,10 @@ def render_login_page():
     if request.method == 'POST':
         email = request.form.get('email').title().lower()
         password = request.form.get('password')
-
-        query = """SELECT id, fname, password FROM user WHERE email=?"""
         con = create_connection(DATABASE)
+
+        query = """SELECT * FROM user WHERE email=?"""
+
         cur = con.cursor()
         cur.execute(query, (email,))
         user_data = cur.fetchall()
@@ -69,10 +99,12 @@ def render_login_page():
         # would be better to find out how to see if the query return an empty list
 
         try:
-            customer_id = user_data[0][0]
-            first_name = user_data[0][1]
-            db_password = user_data[0][2]
-            print(customer_id, first_name)
+            user_id = user_data[0][0]
+            fname = user_data[0][1]
+            lname = user_data[0][2]
+            email = user_data[0][3]
+            db_password = user_data[0][4]
+            modify = user_data[0][5]
         except IndexError:
             return redirect("/login?error=Email+invalid+or+password+incorrect")
 
@@ -81,12 +113,15 @@ def render_login_page():
         if not bcrypt.check_password_hash(db_password, password):
             return redirect(request.referrer + "?error+Email+invalid+or+password+incorrect")
 
+        session['userid'] = user_id
         session['email'] = email
-        session['userid'] = customer_id
-        session['first_name'] = first_name
+        session['fname'] = fname
+        session['lname'] = lname
+        session['modify'] = modify
         print(session)
         return redirect('/')
-    return render_template('login.html', logged_in=is_logged_in())
+    return render_template('login.html', logged_in=is_logged_in(), modify=edit(),
+                           user_data=user_id_conversion(session.get("user_id")), all_categories=get_categories())
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -101,7 +136,12 @@ def render_signup_page():
         email = request.form.get('email').title().lower()
         password = request.form.get('password')
         password2 = request.form.get('password2')
+        can_modify = request.form.get("edit")
         re1 = re.compile(r"[<>/{}[\]~`.?;:-=_+)(*&^%$#@!,]");
+
+        modify = False
+        if can_modify:
+            modify = True
 
         if re1.search(fname):
             return redirect('/signup?error=invalid+character/s')
@@ -125,11 +165,15 @@ def render_signup_page():
 
         con = create_connection(DATABASE)
 
-        query = "INSERT INTO user (id, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)"
+        query = "SELECT id FROM user WHERE email=?"
+        cur = con.cursor()
+        cur.execute(query, (email,))
+
+        query = "INSERT INTO user (id, fname, lname, email, password, edit) VALUES (NULL, ?, ?, ?, ?, ?)"
         cur = con.cursor()  # you need this line next
 
         try:
-            cur.execute(query, (fname, lname, email, hashed_password))  # this line executes the query
+            cur.execute(query, (fname, lname, email, hashed_password, modify))  # this line executes the query
         except sqlite3.IntegrityError:
             return redirect('/signup?error=Email+is+already+used')
 
@@ -138,12 +182,8 @@ def render_signup_page():
 
         return redirect("/login")
 
-    # if the request was a GET request
-    error = request.args.get('error')
-    if error is None:
-        error = ""
-
-    return render_template('signup.html', error=error, logged_in=is_logged_in())
+    return render_template('signup.html', user_data=user_id_conversion(session.get("user_id")),
+                           logged_in=is_logged_in(), modify=edit(), all_categories=get_categories())
 
 
 @app.route('/logout')
@@ -157,6 +197,23 @@ def logout():
     return redirect('/?message=See+you+next+time!')
 
 
+@app.route("/add", methods=["GET", "POST"])
+def render_add():
+    return render_template("add.html", logged_in=is_logged_in(),
+                           user_data=user_id_conversion(session.get("user_id")),
+                           modify=edit(), all_categories=get_categories())
+
+
+def get_categories():
+    con = create_connection(DATABASE)
+    query = "SELECT id, name FROM categories"
+    cur = con.cursor()
+    cur.execute(query)
+    category_list = cur.fetchall()
+    con.close()
+    return category_list
+
+
 def is_logged_in():
     if session.get('email') is None:
         print('not logged in')
@@ -166,50 +223,24 @@ def is_logged_in():
         return True
 
 
-def send_confirmation(order_info):
-    print(order_info)
-    email = session['email']
-    firstname = session['firstname']
-    SSL_PORT = 465  # For SSL
+def user_id_conversion(user_id):
+    con = create_connection(DATABASE)
+    query = "SELECT * FROM user where id=?"
+    cur = con.cursor()
+    cur.execute(query, (user_id, ))
+    return_name = cur.fetchall()
+    print(return_name)
+    con.close()
+    return return_name
 
-    sender_email = input("Gmail address: ").strip()
-    sender_password = input("Gmail password: ").strip()
-    table = "<table>\n<tr><th>Name</th><th>Quantity</th><th>Price</th><th>Order total</th></tr>\n"
-    total = 0
-    for product in order_info:
-        name = product[2]
-        quantity = product[1]
-        price = product[3]
-        subtotal = product[3] * product[1]
-        total += subtotal
-        table += "<tr><td>{}</td><td>{}</td><td>{:.2f}</td><td>{:.2f}</td></tr>\n".format(name, quantity, price,
-                                                                                          subtotal)
-    table += "<tr><td></td><td></td><td>Total:</td><td>{:.2f}</td></tr>\n</table>".format(total)
-    print(table)
-    print(total)
-    html_text = """<p>Hello {}.</p>
-   <p>Thank you for shopping at smile cafe. Your order summary:</p>"
-   {}
-   <p>Thank you, <br>The staff at smile cafe.</p>""".format(firstname, table)
-    print(html_text)
 
-    context = ssl.create_default_context()
-    message = MIMEMultipart("alternative")
-    message["Subject"] = "Your order with smile"
-
-    message["From"] = "smile cafe"
-    message["To"] = email
-
-    html_content = MIMEText(html_text, "html")
-    message.attach(html_content)
-    with smtplib.SMTP_SSL("smtp.gmail.com", SSL_PORT, context=context) as server:
-        try:
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, email, message.as_string())
-        except SMTPAuthenticationError as e:
-            print(e)
+def edit():
+    if session.get("edit") == 1:
+        print("Is a teacher")
+        return True
+    else:
+        print("is not a teacher")
+        return False
 
 
 app.run(host='0.0.0.0', debug=True)
-
-

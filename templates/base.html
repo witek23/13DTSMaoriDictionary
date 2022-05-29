@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,42 +10,49 @@
 </head>
 
 <body>
-	<div id="container">
+<div id="container">
 
-		<header>
-			<h1>{% block heading %}Maori Dictionary{% endblock %}</h1>
-		</header>
+    <header>
+        <h1>{% block heading %}Maori Dictionary{% endblock %}</h1>
+    </header>
 
-		<nav>
-            <input type="checkbox" name="drop_down_menu" />
-			<span></span>
-			<span></span>
-			<span></span>
-			<ul>
-                <li><a href="\">Home</a></li>
+    <nav>
+            <input type="checkbox" name="drop_down_menu"/>
+        <ul>
+            <li><a href="\">Home</a></li>
 
+            {% if not logged_in %}
+            <li><a href="\login">Login</a></li>
+            <li><a href="\signup">Signup</a></li>
+            {% else %}
+            <li><a href="\logout">Logout</a></li>
+            {% endif %}
 
-			</ul>
-		</nav>
+            {% if modify %}
+            <p4>_____________________</p4>
+            <br>
+            <br>
+            <li><a href="\add">Add Word</a></li>
+            {% endif %}
 
+            <p4>_____________________</p4>
+            <br>
+            <br>
 
-		<!--
-		=====================================================
-		== Content row of the template.                 ==
-		=====================================================
-		-->
+            {% for category in categories %}
+            <li><a href="\category/{{ category[0] }}">{{ category[1] }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
 
-		<main>
-            {% block main%}{% endblock %}
-        </main>
-
-
-		<footer>
-			<p>
-				&copy; Witek 2020
-			</p>
-		</footer>
-
-	</div>
+    <main>
+        {% block main%}{% endblock %}
+    </main>
+</div>
 </body>
+<footer>
+    <p>
+        &copy; Witek 2022
+    </p>
+</footer>
 </html>

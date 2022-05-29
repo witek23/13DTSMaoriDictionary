@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Maōri Dictionary | Words{% endblock %}
+
+{% block heading %}Maōri - English Dictionary{% endblock %}
+
+{% block main %}
+
+<form class="dataform" method="post">
+    <div class="form-group">
+        <div class="form-label">Maori</div>
+        <div class="form-element"><input id='maori' name='maori' type="text" required></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label">English</div>
+        <div class="form-element"><input id='english' name='english' type="text" required></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label">Description</div>
+        <div class="form-element"><input id='description' name='description' type="text" required></div>
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="categories">Category:</label>
+        <select id="categories" name="categories">
+            <option value=1>Actions</option>
+            <option value=2>Animals</option>
+            <option value=3>Clothing</option>
+            <option value=4>Culture / Religion</option>
+            <option value=5>Descriptive</option>
+            <option value=6>Emotions</option>
+            <option value=7>Food</option>
+            <option value=8>Math / Number</option>
+            <option value=9>Outdoors</option>
+            <option value=10>People</option>
+            <option value=11>Places</option>
+            <option value=12>Plants</option>
+            <option value=13>School</option>
+            <option value=14>Sport</option>
+            <option value=15>Technology</option>
+            <option value=16>Time</option>
+        </select>
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="level">level:</label>
+        <select id="level" name="level">
+            <option value=1>1</option>
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
+            <option value=5>5</option>
+            <option value=6>6</option>
+            <option value=7>7</option>
+            <option value=8>8</option>
+            <option value=9>9</option>
+            <option value=10>10</option>
+        </select>
+    </div>
+    <br>
+
+    <div class="form-group">
+        <div class="form-element">
+            <input type="submit" name="login">
+        </div>
+    </div>
+
+</form>
+{% endblock %}

@@ -1,8 +1,10 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{% block pageheading %}login{% endblock %}
+{% block title %}Maōri Dictionary | Login{% endblock %}
 
+{% block heading %}Maōri - English Dictionary{% endblock %}
 {% block main %}
+
 <form class="myform" method="POST">
     <div class="form-group">
         <div class="form-label">Email:</div>
@@ -19,7 +21,6 @@
 </form>
 <p><br><br><br>If you don't yet have an account, please <a href="/signup">sign up</a>.</p>
 {% endblock %}
-
 
 
 

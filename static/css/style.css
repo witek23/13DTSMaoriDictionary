@@ -13,7 +13,7 @@
 
 header {
     grid-area: header;
-    background-color: #f00;
+    background-color: rgba(193, 9, 9, 0.86); /* red */
     padding: 1rem;
 }
 
@@ -98,7 +98,7 @@ img .thumb {
 footer {
     grid-area: footer;
     padding: 1rem;
-    background-color: #f00;
+    background-color: rgba(193, 9, 9, 0.86); /* red */
 }
 
 footer p {
@@ -134,7 +134,7 @@ footer img {
 
     nav a:hover
     {
-      color: tomato;
+      color: rgba(193, 9, 9, 0.86); /* red */
     }
 
 
@@ -228,7 +228,7 @@ footer img {
       padding: 50px;
       padding-top: 125px;
 
-      background: #ed9999;
+      background: rgba(193, 9, 9, 0.86); /* red */
       list-style-type: none;
       -webkit-font-smoothing: antialiased;
       /* to stop flickering of text in safari */
@@ -260,7 +260,7 @@ footer img {
     }
 
     nav {
-        background: linear-gradient(180deg, rgba(255,0,0,1) 0%, rgba(0, 0, 0, 1) 50%,  rgba(255,0,0,1) 100%);
+        background: linear-gradient(180deg, rgba(193, 9, 9, 0.86) 0%, rgba(0, 0, 0, 1) 50%,  rgba(193, 9, 9, 0.86) 100%);
         padding: 0.5rem;
     }
 
@@ -283,9 +283,6 @@ footer img {
         visibility: hidden;
     }
 
-    main {
-        background-image: url('/poutama.jpg');
-    }
     .formRow {
         display: grid;
         grid-template-columns: 1fr 2fr;

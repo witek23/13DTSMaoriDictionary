@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Maōri Dictionary | Words{% endblock %}
+
+{% block heading %}Maōri - English Dictionary{% endblock %}
+
+{% block main %}
+<div class="">
+
+    <h2>{{ cat_data[0][1] }}</h2>
+    <br>
+
+    <table>
+        <tr>
+            <th>Maori</th>
+            <th>English</th>
+            <th>Image</th>
+        </tr>
+        {% for word in words_found %}
+        <tr class="">
+            <td><a href="\dictionary/{{ word[0] }}">{{ word[1] }}</a></td>
+            <td><a href="\dictionary/{{ word[0] }}">{{ word[2] }}</a></td>
+            <td><img src="/static/images/{{ word[6] }}"></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
