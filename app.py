@@ -114,9 +114,9 @@ def render_login_page():
             return redirect(request.referrer + "?error+Email+invalid+or+password+incorrect")
 
         session['userid'] = user_id
-        session['email'] = email
         session['fname'] = fname
         session['lname'] = lname
+        session['email'] = email
         session['modify'] = modify
         print(session)
         return redirect('/')
@@ -136,7 +136,7 @@ def render_signup_page():
         email = request.form.get('email').title().lower()
         password = request.form.get('password')
         password2 = request.form.get('password2')
-        can_modify = request.form.get("edit")
+        can_modify = request.form.get("modify")
         re1 = re.compile(r"[<>/{}[\]~`.?;:-=_+)(*&^%$#@!,]");
 
         modify = False
@@ -169,7 +169,7 @@ def render_signup_page():
         cur = con.cursor()
         cur.execute(query, (email,))
 
-        query = "INSERT INTO user (id, fname, lname, email, password, edit) VALUES (NULL, ?, ?, ?, ?, ?)"
+        query = "INSERT INTO user (id, fname, lname, email, password, modify) VALUES (NULL, ?, ?, ?, ?, ?)"
         cur = con.cursor()  # you need this line next
 
         try:
@@ -235,7 +235,7 @@ def user_id_conversion(user_id):
 
 
 def edit():
-    if session.get("edit") == 1:
+    if session.get("modify") == 1:
         print("Is a teacher")
         return True
     else:

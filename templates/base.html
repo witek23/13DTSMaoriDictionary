@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Suez+One&display=swap" rel="stylesheet">
-	<title>{% block title %}{% endblock %}</title>
-	<meta name="Description" content="Author: D Benseman, Content: A dictionary to convert maori words to english.">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Suez+One&display=swap" rel="stylesheet">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="Description" content="Author: D Benseman, Content: A dictionary to convert maori words to english.">
 </head>
 
 <body>
@@ -17,15 +17,15 @@
     </header>
 
     <nav>
-            <input type="checkbox" name="drop_down_menu"/>
+        <input type="checkbox" name="drop_down_menu"/>
         <ul>
             <li><a href="\">Home</a></li>
 
             {% if not logged_in %}
-            <li><a href="\login">Login</a></li>
-            <li><a href="\signup">Signup</a></li>
+                <li><a href="\login">Login</a></li>
+                <li><a href="\signup">Signup</a></li>
             {% else %}
-            <li><a href="\logout">Logout</a></li>
+                <li><a href="\logout">Logout</a></li>
             {% endif %}
 
             {% if modify %}
@@ -39,7 +39,7 @@
             <br>
             <br>
 
-            {% for category in categories %}
+            {% for category in all_categories %}
             <li><a href="\category/{{ category[0] }}">{{ category[1] }}</a></li>
             {% endfor %}
         </ul>
@@ -52,7 +52,7 @@
 </body>
 <footer>
     <p>
-        &copy; Witek 2022
+        &copy; Witek Betkier 2022
     </p>
 </footer>
 </html>
