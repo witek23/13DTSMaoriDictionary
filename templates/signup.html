@@ -5,7 +5,7 @@
 {% block heading %}Maōri - English Dictionary{% endblock %}
 
 {% block main %}
-<form class="myform" method="POST">
+<form class="dataForm" method="POST">
     <div class="form-group">
         <div class="form-label">First name:</div>
         <div class="form-element"><input type="text" name="fname" id="fname" required></div>
@@ -31,8 +31,8 @@
         <div class="form-label">Are you a:</div>
         <input type="radio" id="student" name="can_edit" value="0" required>
         <label for="student"> Student</label>
-        <input type="radio" id="teacher" name="can_edit" value="1" required>
-        <label for="teacher"> Teacher</label>
+        <input type="radio" id="modify" name="modify" value="1" required>
+        <label for="modify"> Teacher</label>
     </div>
     <div class="form-group">
         <div class="form-label"></div>

@@ -1,28 +1,39 @@
 {% extends 'base.html' %}
 
-{% block title %}Maōri Dictionary | Words{% endblock %}
+{% block title %}Maōri Dictionary | Add Word{% endblock %}
 
 {% block heading %}Maōri - English Dictionary{% endblock %}
 
 {% block main %}
-
-<form class="dataform" method="post">
+<form class="dataForm" method="post">
     <div class="form-group">
-        <div class="form-label">Maori</div>
-        <div class="form-element"><input id='maori' name='maori' type="text" required></div>
+        <div class="form-label">
+            Maori
+        </div>
+        <div class="form-element">
+            <input type="text" id="maori" name="maori" required>
+        </div>
     </div>
     <div class="form-group">
-        <div class="form-label">English</div>
-        <div class="form-element"><input id='english' name='english' type="text" required></div>
+        <div class="form-label">
+            English
+        </div>
+        <div class="form-element">
+            <input type="text" id="english" name="english" required>
+        </div>
     </div>
     <div class="form-group">
-        <div class="form-label">Description</div>
-        <div class="form-element"><input id='description' name='description' type="text" required></div>
+        <div class="form-label">
+            Definition
+        </div>
+        <div class="form-element">
+            <input type="text" id="definition" name="definition" required>
+        </div>
     </div>
-    <br>
+        <br>
     <div class="form-group">
-        <label for="all_categories">Category:</label>
-        <select id="all_categories" name="all_categories">
+        <label for="categories">Category:</label>
+          <select id="categories" name="categories">
             <option value=1>Actions</option>
             <option value=2>Animals</option>
             <option value=3>Clothing</option>
@@ -39,12 +50,12 @@
             <option value=14>Sport</option>
             <option value=15>Technology</option>
             <option value=16>Time</option>
-        </select>
+          </select>
     </div>
-    <br>
+        <br>
     <div class="form-group">
         <label for="level">level:</label>
-        <select id="level" name="level">
+          <select id="level" name="level">
             <option value=1>1</option>
             <option value=2>2</option>
             <option value=3>3</option>
@@ -55,7 +66,7 @@
             <option value=8>8</option>
             <option value=9>9</option>
             <option value=10>10</option>
-        </select>
+          </select>
     </div>
     <br>
 
@@ -67,3 +78,4 @@
 
 </form>
 {% endblock %}
+ %}

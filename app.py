@@ -22,6 +22,15 @@ def create_connection(db_file):
     return None
 
 
+def edit():
+    if session.get("modify") == 1:
+        print("Is a teacher")
+        return True
+    else:
+        print("is not a teacher")
+        return False
+
+
 @app.route('/')
 def render_homepage():
     return render_template('home.html', all_categories=get_categories(),
@@ -169,7 +178,7 @@ def render_signup_page():
         cur = con.cursor()
         cur.execute(query, (email,))
 
-        query = "INSERT INTO user (id, fname, lname, email, password, modify) VALUES (NULL, ?, ?, ?, ?, ?)"
+        query = "INSERT INTO user (id, fname, lname, email, password, modify) VALUES(NULL, ?, ?, ?, ?, ?)"
         cur = con.cursor()  # you need this line next
 
         try:
@@ -195,13 +204,6 @@ def logout():
     [session.pop(key) for key in list(session.keys())]
     print(list(session.keys()))
     return redirect('/?message=See+you+next+time!')
-
-
-@app.route("/add", methods=["GET", "POST"])
-def render_add():
-    return render_template("add.html", logged_in=is_logged_in(),
-                           user_data=user_id_conversion(session.get("user_id")),
-                           modify=edit(), all_categories=get_categories())
 
 
 def get_categories():
@@ -234,13 +236,11 @@ def user_id_conversion(user_id):
     return return_name
 
 
-def edit():
-    if session.get("modify") == 1:
-        print("Is a teacher")
-        return True
-    else:
-        print("is not a teacher")
-        return False
+@app.route('/add', methods=["GET", "POST"])
+def render_add():
+    return render_template("add.html", logged_in=is_logged_in(),
+                           user_data=user_id_conversion(session.get("user_id")),
+                           modify=edit(), all_categories=get_categories())
 
 
 app.run(host='0.0.0.0', debug=True)
